@@ -12,13 +12,20 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-@WebServlet("/calcpage")
+@WebServlet("/calcPage")
 public class CalcPage extends HttpServlet{
 	@Override
 	protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		ServletContext application = request.getServletContext();
-		HttpSession session = request.getSession();
 		Cookie[] cookies = request.getCookies();
+		
+		String exp = "0";
+		if(cookies != null)
+		for(Cookie c : cookies) {
+			if(c.getName().equals("exp")) {
+				exp = c.getValue();
+				break;
+				}
+		}
 		
 		response.setCharacterEncoding("UTF-8");
 		response.setContentType("text/html; charset=UTF-8");
@@ -48,7 +55,7 @@ public class CalcPage extends HttpServlet{
 		out.write("<form action='calc3' method='post'>");
 		out.write("<table>");
 		out.write("<tr>");
-		out.printf("<td class='output' colspan = '4'>%d</td>", 3+4);
+		out.printf("<td class='output' colspan = '4'>%s</td>", exp);
 		out.write("</tr>");
 		out.write("<tr>");
 		out.write("<td><input type='submit' name='button' value='CE'></td>");

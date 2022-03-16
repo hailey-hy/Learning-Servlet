@@ -37,12 +37,14 @@ public class Calc2 extends HttpServlet{
 			
 //			int x = (Integer)session.getAttribute("value");
 //			int x = (Integer)application.getAttribute("value");
+			
 			int x = 0;
 			for(Cookie c : cookies) {
-			if(c.getName().equals("value"))
+			if(c.getName().equals("value")) {
 				x = Integer.parseInt(c.getValue());
 				break;
 				}
+			}
 			int y = v;
 			
 //			String button = (String)session.getAttribute("button");
@@ -50,11 +52,11 @@ public class Calc2 extends HttpServlet{
 			
 			String button = "";
 			for(Cookie c : cookies) {
-				if(c.getName().equals("button"))
+				if(c.getName().equals("button")) {
 					button = c.getValue();
 					break;
 					}
-			
+			}
 			int total = 0;
 			if(button.equals("+")) total = x + y;
 			if(button.equals("-")) total = x - y;
@@ -75,6 +77,7 @@ public class Calc2 extends HttpServlet{
 			response.addCookie(valueCookie);
 			response.addCookie(btCookie);
 			
+			response.sendRedirect("calc2.html");
 		}
 	}
 }

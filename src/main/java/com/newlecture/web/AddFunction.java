@@ -20,10 +20,16 @@ public class AddFunction extends HttpServlet{
 		
 		PrintWriter out = response.getWriter();
 		
-		String x= request.getParameter("x");
-		String y= request.getParameter("y");
+		String x_= request.getParameter("x");
+		String y_= request.getParameter("y");
 		
-		int total = Integer.parseInt(x) + Integer.parseInt(y);
+		int x = 0;
+		int y = 0;
+		
+		if (!x_.equals("")) x = Integer.parseInt(x_);
+		if (!y_.equals("")) y = Integer.parseInt(y_);
+		
+		int total = x + y;
 		
 		out.print(total);
 	}

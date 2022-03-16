@@ -3,6 +3,9 @@ package com.newlecture.web;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -16,68 +19,42 @@ import javax.servlet.http.HttpSession;
 public class Calc3 extends HttpServlet{
 	@Override
 	protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		ServletContext application = request.getServletContext();
-		HttpSession session = request.getSession();
+		
 		Cookie[] cookies = request.getCookies();
-		
-		response.setCharacterEncoding("UTF-8");
-		response.setContentType("text/html; charset=UTF-8");
-		
 		
 		PrintWriter out = response.getWriter();
 		
-		String v_ = request.getParameter("value");
-		String bt = request.getParameter("button");
+		String value = request.getParameter("value");
+		String operator = request.getParameter("button");
+		String dot = request.getParameter("dot");
 		
-		int v = 0;
-		
-		if (!v_.equals("")) v = Integer.parseInt(v_);
-		
-		if(bt.equals("=")) {
-			
-//			int x = (Integer)session.getAttribute("value");
-//			int x = (Integer)application.getAttribute("value");
-			
-			int x = 0;
-			for(Cookie c : cookies) {
-			if(c.getName().equals("value")) {
-				x = Integer.parseInt(c.getValue());
+		String exp = "";
+		if(cookies != null)
+		for(Cookie c : cookies) {
+			if(c.getName().equals("exp")) {
+				exp = c.getValue();
 				break;
 				}
+		}
+		if(operator != null && operator.equals("=")) {
+			ScriptEngine engine = new ScriptEngineManager().getEngineByName("graal.js");
+			try {
+				exp = String.valueOf(engine.eval(exp));
+			} catch (ScriptException e) {
+				e.printStackTrace();
 			}
-			int y = v;
-			
-//			String button = (String)session.getAttribute("button");
-//			String button = (String)application.getAttribute("button");
-			
-			String button = "";
-			for(Cookie c : cookies) {
-				if(c.getName().equals("button")) {
-					button = c.getValue();
-					break;
-					}
-			}
-			int total = 0;
-			if(button.equals("+")) total = x + y;
-			if(button.equals("-")) total = x - y;
-			
-			response.getWriter().printf("total is %d\n", total);
 		}
 		else {
-//			application.setAttribute("value", v);
-//			application.setAttribute("button", bt);
-			
-//			session.setAttribute("value", v);
-//			session.setAttribute("button", bt);
-			
-			Cookie valueCookie = new Cookie("value", String.valueOf(v));
-			Cookie btCookie = new Cookie("button", bt);
-			valueCookie.setPath("/calc2");
-			btCookie.setPath("/calc2");
-			response.addCookie(valueCookie);
-			response.addCookie(btCookie);
-			
-			response.sendRedirect("calc2.html");
+			exp += (value == null)?"":value;
+			exp += (operator == null)?"":operator;
+			exp += (dot == null)?"":dot;
 		}
+		
+		Cookie expCookie = new Cookie("exp", exp);
+		
+		
+		response.addCookie(expCookie);	
+		response.sendRedirect("calcPage");
+		
 	}
 }
